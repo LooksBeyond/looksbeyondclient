@@ -35,6 +35,11 @@ class _BrandProfileScreenState extends State<BrandProfileScreen> {
               color: Colors.black,
             ),
           ),
+          actions: [
+            IconButton(onPressed: (){
+              authenticationProvider.signOut(context);
+            }, icon: Icon(Icons.logout))
+          ],
         ),
         body: SafeArea(
           child: Column(

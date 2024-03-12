@@ -119,8 +119,9 @@ class _AddEmployeeState extends State<AddEmployee> {
               });
 
               loggedInBrand.employees.add(employeeRef.id);
-              await FirebaseFirestore.instance.collection('brand').doc(loggedInBrand.uid).set({
-                'employees': loggedInBrand.employees
+              print('brand id ${loggedInBrand.uid}');
+              await FirebaseFirestore.instance.collection('brands').doc(loggedInBrand.uid).set({
+                'employees': FieldValue.arrayUnion([employeeRef.id]),
               }, SetOptions(merge: true));
 
 
