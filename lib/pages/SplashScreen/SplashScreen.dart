@@ -3,13 +3,16 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:looksbeyondclient/models/logged_in_user.dart';
+import 'package:looksbeyondclient/models/logged_in_brand.dart';
 // import 'package:looksbeyondclient/pages/AdditonalInfo/AdditionalInfoScreen.dart';
 // import 'package:looksbeyondclient/pages/Dashboard/dashboard.dart';
 import 'package:looksbeyondclient/pages/Login/loginPage.dart';
 import 'package:looksbeyondclient/provider/AuthProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../AdditionalInfo/AdditionalInfoScreen.dart';
+import '../Dashboard/dashboard.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -27,6 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
     authenticationProvider =
         Provider.of<AuthenticationProvider>(context, listen: false);
     _checkAuthentication();
+    // _navigateToLogin();
   }
 
   void _checkAuthentication() async {
@@ -58,11 +62,11 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _navigateToHome() {
-    // Navigator.of(context).pushReplacementNamed(BottomNavBarScreen.pageName);
+    Navigator.of(context).pushReplacementNamed(BottomNavBarScreen.pageName);
   }
 
   void _navigateToAdditionalDetails() {
-    // Navigator.of(context).pushReplacementNamed(AdditionalInfoScreen.pageName);
+    Navigator.of(context).pushReplacementNamed(AdditionalInfoScreen.pageName);
   }
 
   void _navigateToLogin() {

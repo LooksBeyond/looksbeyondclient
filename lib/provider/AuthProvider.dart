@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:looksbeyondclient/models/logged_in_user.dart';
+import 'package:looksbeyondclient/models/brand_booking.dart';
+import 'package:looksbeyondclient/models/logged_in_brand.dart';
 import 'package:looksbeyondclient/pages/Login/loginPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticationProvider with ChangeNotifier {
   late SharedPreferences _preferences;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  LoggedInUser? _loggedInUser; // Store the logged-in user
+  LoggedInBrand? _loggedInBrand; // Store the logged-in brand
 
   // Getter to access the logged-in user
-  LoggedInUser? get loggedInUser => _loggedInUser;
+  LoggedInBrand? get loggedInBrand => _loggedInBrand;
 
   User? get firebaseUser => FirebaseAuth.instance.currentUser;
 
@@ -26,57 +27,83 @@ class AuthenticationProvider with ChangeNotifier {
     }
   }
 
-
   // Function to initialize the logged-in user
-  Future<LoggedInUser?> initLoggedInUser(User? firebaseUser) async {
+  Future<LoggedInBrand?> initLoggedInUser(User? firebaseUser) async {
     _preferences = await SharedPreferences.getInstance();
     if (firebaseUser != null) {
       DocumentSnapshot snapshot = await FirebaseFirestore.instance
-          .collection('users')
+          .collection('brands')
           .doc(firebaseUser.uid)
           .get();
-      _loggedInUser = LoggedInUser.fromFireStore(snapshot);
-      await setUserSharedPrefs(_preferences, _loggedInUser!);
+      _loggedInBrand = LoggedInBrand.fromFireStore(snapshot);
+      await setUserSharedPrefs(_preferences, _loggedInBrand!);
     } else {
-      _loggedInUser = null;
+      _loggedInBrand = null;
     }
     notifyListeners(); // Notify listeners of any changes
-    return _loggedInUser;
+    return _loggedInBrand;
   }
 
-  setUserSharedPrefs(SharedPreferences prefs, LoggedInUser user) async {
-    print("setting shared pref: " + user.address + user.address.toString() + user.phoneNumber + user.profileImage);
+  setUserSharedPrefs(SharedPreferences prefs, LoggedInBrand user) async {
+    print("setting shared pref: " +
+        user.address +
+        user.address.toString() +
+        user.phoneNumber +
+        user.brandLogo);
     if (user.address != "" &&
-        user.age != 0 &&
+        user.owner != "" &&
         user.phoneNumber != "" &&
-        user.profileImage != "") {
-    print("setting shared pref: as true");
+        user.brandLogo != "") {
+      print("setting shared pref: as true");
       await prefs.setBool("isProfileCompleted", true);
-    }else{
-    print("setting shared pref: as false");
+    } else {
+      print("setting shared pref: as false");
       await prefs.setBool("isProfileCompleted", false);
     }
   }
 
-
   void updateLoggedInUser({
     String? phoneNumber,
-    String? profileImage,
+    String? brandlogo,
     String? address,
-    int? age,
+    String? owner,
   }) {
-    if (_loggedInUser != null) {
+    if (_loggedInBrand != null) {
       // Update the user's parameters if they are not null
-      _loggedInUser!.phoneNumber = phoneNumber ?? _loggedInUser!.phoneNumber;
-      _loggedInUser!.profileImage = profileImage ?? _loggedInUser!.profileImage;
-      _loggedInUser!.address = address ?? _loggedInUser!.address;
-      _loggedInUser!.age = age ?? _loggedInUser!.age;
+      _loggedInBrand!.phoneNumber = phoneNumber ?? _loggedInBrand!.phoneNumber;
+      _loggedInBrand!.brandLogo = brandlogo ?? _loggedInBrand!.brandLogo;
+      _loggedInBrand!.address = address ?? _loggedInBrand!.address;
+      _loggedInBrand!.owner = owner ?? _loggedInBrand!.owner;
 
       // Notify listeners of the change
       notifyListeners();
     }
-    print(_loggedInUser);
+    print(_loggedInBrand);
   }
 
+  Stream<List<BrandBooking>> get brandBookingsStream {
+    return FirebaseFirestore.instance
+        .collection('bookings')
+        .where('brand', isEqualTo: _loggedInBrand!.uid)
+        .where('status', isEqualTo: 'completed')
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => BrandBooking.fromFireStore(doc))
+            .toList());
+  }
 
+  Future<DocumentSnapshot?> getEmployeeData(String employeeId) async {
+    try {
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('employee')
+          .doc(employeeId)
+          .get();
+      if (snapshot.exists) {
+        return snapshot;
+      }
+    } catch (e) {
+      print('Error fetching employee name: $e');
+    }
+    return null;
+  }
 }

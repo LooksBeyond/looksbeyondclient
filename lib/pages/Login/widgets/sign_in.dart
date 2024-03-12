@@ -4,13 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:looksbeyondclient/models/logged_in_user.dart';
+import 'package:looksbeyondclient/models/logged_in_brand.dart';
 // import 'package:looksbeyond/pages/AdditonalInfo/AdditionalInfoScreen.dart';
 // import 'package:looksbeyond/pages/Dashboard/dashboard.dart';
 import 'package:looksbeyondclient/provider/AuthProvider.dart';
 import 'package:looksbeyondclient/theme.dart';
 import 'package:looksbeyondclient/widgets/snackbar.dart';
 import 'package:provider/provider.dart';
+
+import '../../AdditionalInfo/AdditionalInfoScreen.dart';
+import '../../Dashboard/dashboard.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -82,7 +85,7 @@ class _SignInState extends State<SignIn> {
                               color: Colors.black,
                               size: 22.0,
                             ),
-                            hintText: 'Email Address',
+                            hintText: 'Brand Email',
                             hintStyle: TextStyle(
                                 fontFamily: 'WorkSansSemiBold', fontSize: 17.0),
                           ),
@@ -200,70 +203,6 @@ class _SignInState extends State<SignIn> {
                       fontFamily: 'WorkSansMedium'),
                 )),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: <Color>[
-                          Colors.white10,
-                          Colors.white,
-                        ],
-                        begin: FractionalOffset(0.0, 0.0),
-                        end: FractionalOffset(1.0, 1.0),
-                        stops: <double>[0.0, 1.0],
-                        tileMode: TileMode.clamp),
-                  ),
-                  width: 100.0,
-                  height: 1.0,
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 15.0, right: 15.0),
-                  child: Text(
-                    'Or',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
-                        fontFamily: 'WorkSansMedium'),
-                  ),
-                ),
-                Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: <Color>[
-                          Colors.white,
-                          Colors.white10,
-                        ],
-                        begin: FractionalOffset(0.0, 0.0),
-                        end: FractionalOffset(1.0, 1.0),
-                        stops: <double>[0.0, 1.0],
-                        tileMode: TileMode.clamp),
-                  ),
-                  width: 100.0,
-                  height: 1.0,
-                ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 10.0),
-                child: SignInButton(
-                  Buttons.Google,
-                  text: "Sign in with Google",
-                  onPressed: () {
-                    return CustomSnackBar(
-                        context, const Text('Google button pressed'));
-                  },
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );
@@ -281,26 +220,38 @@ class _SignInState extends State<SignIn> {
       );
 
       String userId = FirebaseAuth.instance.currentUser!.uid;
-      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).get();
 
+      // Check if the user exists in the brands collection
+      DocumentSnapshot brandSnapshot =
+      await FirebaseFirestore.instance.collection('brands').doc(userId).get();
 
-      if (userSnapshot.exists && userSnapshot.data() != null) {
-        // Map<String, dynamic>? userData = userSnapshot.data() as Map<String, dynamic>?;
-      await FirebaseFirestore.instance.collection('users').doc(userId).update({
-        'lastLoggedIn': DateTime.now().millisecondsSinceEpoch,
-      });
+      if (brandSnapshot.exists && brandSnapshot.data() != null) {
+        // User is registered as a brand, proceed with authentication
+        await FirebaseFirestore.instance.collection('brands').doc(userId).update({
+          'lastLoggedIn': DateTime.now().millisecondsSinceEpoch,
+        });
 
-        LoggedInUser? loggedInUser = await authProvider.initLoggedInUser(FirebaseAuth.instance.currentUser);
+        LoggedInBrand? loggedInUser =
+        await authProvider.initLoggedInUser(FirebaseAuth.instance.currentUser);
         // Check if the required fields exist in the user document
-        if (loggedInUser!.address != "" && loggedInUser.age != 0 && loggedInUser.phoneNumber != "" && loggedInUser.profileImage != "") {
+        if (loggedInUser!.address != "" &&
+            loggedInUser.owner != "" &&
+            loggedInUser.phoneNumber != "" &&
+            loggedInUser.brandLogo != "") {
           // User has all the necessary information, navigate to home page
-          // Navigator.of(context).pushReplacementNamed(BottomNavBarScreen.pageName);
+          Navigator.of(context).pushReplacementNamed(BottomNavBarScreen.pageName);
         } else {
           // User is missing some information, navigate to complete profile page
-          // Navigator.of(context).pushReplacementNamed(AdditionalInfoScreen.pageName);
+          Navigator.of(context).pushReplacementNamed(AdditionalInfoScreen.pageName);
         }
       } else {
-        // User document does not exist, handle accordingly
+        // User is not registered as a brand, show snackbar indicating to use customer app
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Please use the customer app."),
+            duration: Duration(seconds: 2),
+          ),
+        );
       }
     } catch (error) {
       // Handle login errors

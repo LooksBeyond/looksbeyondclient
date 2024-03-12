@@ -1,38 +1,41 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class LoggedInUser {
+class LoggedInBrand {
   final String uid;
-  final String name;
+  final String brand;
   final String email;
   String phoneNumber;
-  String profileImage;
+  String brandLogo;
   String address;
-  int age;
+  String owner;
+  List employees;
   final DocumentSnapshot snapshot;
 
-  LoggedInUser(
-      {required this.age,
-      required this.name,
+  LoggedInBrand(
+      {required this.owner,
+      required this.brand,
       required this.email,
       required this.phoneNumber,
-      required this.profileImage,
+      required this.brandLogo,
       required this.address,
       required this.uid,
+      required this.employees,
       required this.snapshot});
 
-  factory LoggedInUser.fromFireStore(DocumentSnapshot snapshot) {
+  factory LoggedInBrand.fromFireStore(DocumentSnapshot snapshot) {
     var data = snapshot.data()! as Map<String, dynamic>;
     print("USER DATA IS::");
     print(data);
 
-    var loggedInUser = LoggedInUser(
+    var loggedInUser = LoggedInBrand(
+      employees: data['employees'] ?? [],
       uid: snapshot.id,
-      name: data['name'] ?? '',
+      brand: data['brand'] ?? '',
       email: data['email'] ?? '',
       phoneNumber: data['phone'] ?? '',
-      profileImage: data['img'] ?? '',
+      brandLogo: data['logo'] ?? '',
       address: data['address'] ?? '',
-      age: data['age'] ?? 0,
+      owner: data['owner'] ?? '',
       snapshot: snapshot,
     );
 
@@ -41,8 +44,6 @@ class LoggedInUser {
 
   @override
   String toString() {
-    // TODO: implement toString
-    return "Profile image: ${this.profileImage}, Phone: ${this.phoneNumber}, Address: ${this.address}, Age: ${this.age}, name: ${this.name}";
-
+    return "LOGGED IN BRAND::: Profile image: ${this.brandLogo}, Phone: ${this.phoneNumber}, Address: ${this.address}, Age: ${this.owner}, name: ${this.brand}";
   }
 }

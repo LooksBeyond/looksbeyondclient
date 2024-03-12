@@ -6,12 +6,12 @@ enum Status {
   refunded,
 }
 
-class UserBooking {
+class BrandBooking {
   String? id;
   final String title;
   final String userId;
   final int dateTime;
-  final Status status;
+  Status status;
   final String employee;
   final String brand;
   final bool isPaid;
@@ -25,7 +25,7 @@ class UserBooking {
   String? paidThrough;
   String? empImage;
 
-  UserBooking(
+  BrandBooking(
       {this.id,
       required this.userId,
       required this.isPaid,
@@ -44,12 +44,12 @@ class UserBooking {
       this.paidThrough,
       this.taxes});
 
-  factory UserBooking.fromFireStore(DocumentSnapshot snapshot) {
+  factory BrandBooking.fromFireStore(DocumentSnapshot snapshot) {
     var data = snapshot.data()! as Map<String, dynamic>;
     print("Booking data::");
     print(data);
 
-    var userBooking = UserBooking(
+    var brandBooking = BrandBooking(
       id: snapshot.id,
       userId: data['userId'] ?? '',
       title: data['title'] ?? '',
@@ -73,6 +73,6 @@ class UserBooking {
       taxes: data['taxes'] ?? 0,
     );
 
-    return userBooking;
+    return brandBooking;
   }
 }

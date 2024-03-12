@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:looksbeyondclient/models/logged_in_user.dart';
-// import 'package:looksbeyond/pages/AdditonalInfo/AdditionalInfoScreen.dart';
-// import 'package:looksbeyond/pages/Dashboard/dashboard.dart';
+import 'package:looksbeyondclient/models/logged_in_brand.dart';
 import 'package:looksbeyondclient/provider/AuthProvider.dart';
 import 'package:looksbeyondclient/theme.dart';
 import 'package:looksbeyondclient/widgets/snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../AdditionalInfo/AdditionalInfoScreen.dart';
+import '../../Dashboard/dashboard.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -87,7 +88,7 @@ class _SignUpState extends State<SignUp> {
                               FontAwesomeIcons.user,
                               color: Colors.black,
                             ),
-                            hintText: 'Name',
+                            hintText: 'Brand Name',
                             hintStyle: TextStyle(
                                 fontFamily: 'WorkSansSemiBold', fontSize: 16.0),
                           ),
@@ -119,7 +120,7 @@ class _SignUpState extends State<SignUp> {
                               FontAwesomeIcons.envelope,
                               color: Colors.black,
                             ),
-                            hintText: 'Email Address',
+                            hintText: 'Brand Email',
                             hintStyle: TextStyle(
                                 fontFamily: 'WorkSansSemiBold', fontSize: 16.0),
                           ),
@@ -263,71 +264,6 @@ class _SignUpState extends State<SignUp> {
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: <Color>[
-                          Colors.white10,
-                          Colors.white,
-                        ],
-                        begin: FractionalOffset(0.0, 0.0),
-                        end: FractionalOffset(1.0, 1.0),
-                        stops: <double>[0.0, 1.0],
-                        tileMode: TileMode.clamp),
-                  ),
-                  width: 100.0,
-                  height: 1.0,
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 15.0, right: 15.0),
-                  child: Text(
-                    'Or',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
-                        fontFamily: 'WorkSansMedium'),
-                  ),
-                ),
-                Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: <Color>[
-                          Colors.white,
-                          Colors.white10,
-                        ],
-                        begin: FractionalOffset(0.0, 0.0),
-                        end: FractionalOffset(1.0, 1.0),
-                        stops: <double>[0.0, 1.0],
-                        tileMode: TileMode.clamp),
-                  ),
-                  width: 100.0,
-                  height: 1.0,
-                ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-
-              Padding(
-                padding: const EdgeInsets.only(top: 10.0),
-                child: SignInButton(
-                  Buttons.Google,
-                  text: "Sign up with Google",
-                  onPressed: () {
-                    return CustomSnackBar(
-                        context, const Text('Google button pressed'));
-                  },
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );
@@ -357,22 +293,18 @@ class _SignUpState extends State<SignUp> {
 
     if (password == confirmPassword) {
       try {
-        UserCredential userCredential = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email,
           password: password,
         );
 
-        // Save user data to Firestore
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userCredential.user!.uid)
-            .set({
-          'name': name,
+        // Save user data to Firestore under the "brands" collection
+        await FirebaseFirestore.instance.collection('brands').doc(userCredential.user!.uid).set({
+          'brand': name,
           'email': email,
           'password': password,
           'firstLoggedIn': DateTime.now().millisecondsSinceEpoch,
-          'lastLoggedIn': DateTime.now().millisecondsSinceEpoch
+          'lastLoggedIn': DateTime.now().millisecondsSinceEpoch,
         });
 
         // Save user data to cache memory using shared_preferences
@@ -381,15 +313,13 @@ class _SignUpState extends State<SignUp> {
         prefs.setString('name', name);
         prefs.setString('email', email);
 
-
-
-        LoggedInUser? loggedInUser = await authProvider.initLoggedInUser(userCredential.user);
-        if (loggedInUser!.address != "" && loggedInUser.age != 0 && loggedInUser.phoneNumber != "" && loggedInUser.profileImage != "") {
+        LoggedInBrand? loggedInUser = await authProvider.initLoggedInUser(userCredential.user);
+        if (loggedInUser!.address != "" && loggedInUser.owner != "" && loggedInUser.phoneNumber != "" && loggedInUser.brandLogo != "") {
           // User has all the necessary information, navigate to home page
-          // Navigator.of(context).pushReplacementNamed(BottomNavBarScreen.pageName);
+          Navigator.of(context).pushReplacementNamed(BottomNavBarScreen.pageName);
         } else {
           // User is missing some information, navigate to complete profile page
-          // Navigator.of(context).pushReplacementNamed(AdditionalInfoScreen.pageName);
+           Navigator.of(context).pushReplacementNamed(AdditionalInfoScreen.pageName);
         }
 
       } catch (error) {
@@ -401,4 +331,5 @@ class _SignUpState extends State<SignUp> {
       print('Passwords do not match');
     }
   }
+
 }
