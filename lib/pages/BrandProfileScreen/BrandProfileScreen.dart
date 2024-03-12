@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:looksbeyondclient/models/logged_in_brand.dart';
 import 'package:looksbeyondclient/provider/AuthProvider.dart';
@@ -46,7 +47,16 @@ class _BrandProfileScreenState extends State<BrandProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                child: Image.network(loggedInBrand.brandLogo),
+                child: CachedNetworkImage(
+                  imageUrl: loggedInBrand.brandLogo,
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  imageBuilder: (context, imageProvider) => Container(
+                    child: Image(
+                      image: imageProvider,
+                    ),
+                  ),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
