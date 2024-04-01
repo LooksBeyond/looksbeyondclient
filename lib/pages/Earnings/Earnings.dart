@@ -89,20 +89,23 @@ class _EarningsState extends State<Earnings> {
                             ),
                             Expanded(
                               flex: 2,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Total Earnings: \$${totalEarnings.toStringAsFixed(2)}',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Total Earnings: \$${totalEarnings.toStringAsFixed(2)}',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(height: 10),
-                                  ..._buildIndicators(),
-                                ],
+                                    SizedBox(height: 10),
+                                    ..._buildIndicators(),
+                                  ],
+                                ),
                               ),
                             ),
                           ],
@@ -150,7 +153,7 @@ class _EarningsState extends State<Earnings> {
           title: key,
           showTitle: true,
           radius: 50,
-          badgeWidget: _Badge(employeeImages[key]!, borderColor: Colors.white, size: 30,),
+          // badgeWidget: _Badge(employeeImages[key]!, borderColor: Colors.white, size: 30,),
           badgePositionPercentageOffset: 1,
         ),
       );
@@ -165,9 +168,9 @@ class _EarningsState extends State<Earnings> {
     Color color;
     do {
       color = Color.fromRGBO(
-        random.nextInt(256),
-        random.nextInt(256),
-        random.nextInt(256),
+        random.nextInt(156) + 100,
+        random.nextInt(156) + 100,
+        random.nextInt(156) + 100,
         1,
       );
     } while (usedColors.contains(color));
@@ -253,48 +256,6 @@ class Indicator extends StatelessWidget {
             fontWeight: FontWeight.bold,
             color: textColor,
           ),
-        ),
-      ),
-    );
-  }
-}
-
-
-class _Badge extends StatelessWidget {
-  const _Badge(
-      this.imgURL, {
-        required this.size,
-        required this.borderColor,
-      });
-  final String imgURL;
-  final double size;
-  final Color borderColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: PieChart.defaultDuration,
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: borderColor,
-          width: 2,
-        ),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Colors.black.withOpacity(.5),
-            offset: const Offset(3, 3),
-            blurRadius: 3,
-          ),
-        ],
-      ),
-      padding: EdgeInsets.all(size * .15),
-      child: Center(
-        child: Image.network(
-          imgURL,
         ),
       ),
     );

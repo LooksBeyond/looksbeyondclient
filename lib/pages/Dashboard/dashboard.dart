@@ -136,6 +136,12 @@ class _DashboardState extends State<Dashboard> {
                       ))
                 ],
               ),
+              Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    "Swipe left to complete a booking",
+                    style: TextStyle(fontStyle: FontStyle.italic, fontSize: 10),
+                  )),
               SizedBox(height: 10.0),
               StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
@@ -169,45 +175,53 @@ class _DashboardState extends State<Dashboard> {
                     itemCount: bookingList.length,
                     itemBuilder: (BuildContext context, int index) {
                       return Dismissible(
-                        key: Key(bookingList[index]
-                            .id!), // Use a unique key for each booking
-                        direction: DismissDirection
-                            .endToStart, // Swipe from right to left
-                        background: Container(
-                          alignment: Alignment.centerRight,
-                          color: Colors.green,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: Icon(Icons.check_box, color: Colors.white),
+                          key: Key(bookingList[index]
+                              .id!), // Use a unique key for each booking
+                          direction: DismissDirection
+                              .endToStart, // Swipe from right to left
+                          background: Container(
+                            alignment: Alignment.centerRight,
+                            color: Colors.green,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: Icon(Icons.check_box, color: Colors.white),
+                            ),
                           ),
-                        ),
-                        onDismissed: (direction) async {
-                          // Update the status of the booking to "completed"
-                          bookingList[index].status = Status.completed;
+                          onDismissed: (direction) async {
+                            // Update the status of the booking to "completed"
+                            bookingList[index].status = Status.completed;
 
-                          // Update the document in Firestore
-                          await FirebaseFirestore.instance
-                              .collection('bookings')
-                              .doc(bookingList[index].id)
-                              .update({'status': 'completed'})
-                              .then((value) =>
-                                  print('Booking status updated successfully'))
-                              .catchError((error) => print(
-                                  'Failed to update booking status: $error'));
+                            // Update the document in Firestore
+                            await FirebaseFirestore.instance
+                                .collection('bookings')
+                                .doc(bookingList[index].id)
+                                .update({'status': 'completed'})
+                                .then((value) => print(
+                                    'Booking status updated successfully'))
+                                .catchError((error) => print(
+                                    'Failed to update booking status: $error'));
 
-                          setState(() {
-                            // Update the local list to reflect the change
-                            bookingList.removeAt(index);
-                          });
-                        },
-                        child: ListTile(
-                          title: Text(bookingList[index]
-                              .title), // Replace with relevant booking details
-                          subtitle: Text(bookingList[index]
-                              .status
-                              .toString()), // Replace with relevant booking details
-                        ),
-                      );
+                            setState(() {
+                              // Update the local list to reflect the change
+                              bookingList.removeAt(index);
+                            });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Colors.grey
+                                      .withOpacity(0.5), // Border color
+                                  width: 1.0, // Border width
+                                ),
+                              ),
+                            ),
+                            child: ListTile(
+                              title: Text(bookingList[index].title),
+                              subtitle: Text("\$" +
+                                  bookingList[index].subtotal.toString()),
+                            ),
+                          ));
                     },
                   );
                 },

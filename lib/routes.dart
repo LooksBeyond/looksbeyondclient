@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:looksbeyondclient/pages/AdditionalInfo/AdditionalInfoScreen.dart';
 import 'package:looksbeyondclient/pages/AllBookings/AllBookings.dart';
+import 'package:looksbeyondclient/pages/BookingDetails/BookingDetails.dart';
 import 'package:looksbeyondclient/pages/Dashboard/dashboard.dart';
 import 'package:looksbeyondclient/pages/Earnings/Earnings.dart';
+import 'package:looksbeyondclient/pages/EmployeeProfile/EmployeeProfile.dart';
 import 'package:looksbeyondclient/pages/Employees/employees.dart';
 import 'package:looksbeyondclient/pages/Employees/widgets/addEmployee.dart';
 import 'package:looksbeyondclient/pages/Feedback/feedbackScreen.dart';
@@ -20,8 +22,6 @@ Map<String, WidgetBuilder> appRoutes = {
   AdditionalInfoScreen.pageName: (context) => const AdditionalInfoScreen(),
   AddEmployee.pageName: (context) => const AddEmployee(),
   AllBookings.pageName: (context) => const AllBookings(),
-//   CreateBooking.pageName: (context) => const CreateBooking(),
-//   PaymentScreen.pageName: (context) => const PaymentScreen(),
-//   EmployeeInfoScreen.pageName: (context) => const EmployeeInfoScreen(),
-//   BrandDisplayScreen.pageName: (context) => BrandDisplayScreen(),
+  EmployeeProfile.pageName: (context) => const EmployeeProfile(),
+  BookingDetails.pageName: (context) => const BookingDetails(),
 };
