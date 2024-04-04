@@ -9,6 +9,8 @@ import 'package:looksbeyondclient/provider/AuthProvider.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:provider/provider.dart';
 
+enum Gender { Male, Female }
+
 class AddEmployee extends StatefulWidget {
   static const String pageName = '/addemployees';
 
@@ -20,7 +22,7 @@ class AddEmployee extends StatefulWidget {
 
 class _AddEmployeeState extends State<AddEmployee> {
   final _formKey = GlobalKey<FormState>();
-
+  late Gender _selectedGender;
   TextEditingController _nameController = TextEditingController();
   TextEditingController _ageController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
@@ -37,8 +39,10 @@ class _AddEmployeeState extends State<AddEmployee> {
   @override
   void initState() {
     super.initState();
+    _selectedGender = Gender.Male;
     _getServices();
-    authenticationProvider = Provider.of<AuthenticationProvider>(context, listen: false);
+    authenticationProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
     loggedInBrand = authenticationProvider.loggedInBrand!;
   }
 
@@ -46,14 +50,13 @@ class _AddEmployeeState extends State<AddEmployee> {
     final QuerySnapshot snapshot =
         await FirebaseFirestore.instance.collection('service').get();
     setState(() {
-      _services = snapshot.docs
-          .map((doc) {
+      _services = snapshot.docs.map((doc) {
         final serviceName = doc['name'] as String;
         final serviceId = doc.id;
-        _serviceIds[serviceName] = serviceId; // Store service name and ID in the map
+        _serviceIds[serviceName] =
+            serviceId; // Store service name and ID in the map
         return serviceName;
-      })
-          .toList();
+      }).toList();
     });
   }
 
@@ -103,12 +106,14 @@ class _AddEmployeeState extends State<AddEmployee> {
               for (String serviceName in _selectedServices) {
                 final serviceId = _serviceIds[serviceName];
                 if (serviceId != null) {
-                  servicePricesWithIds[serviceId] = _servicePrices[serviceName] ?? 0.0;
+                  servicePricesWithIds[serviceId] =
+                      _servicePrices[serviceName] ?? 0.0;
                 }
               }
 
               // Add employee details to Firestore
-              DocumentReference employeeRef = await FirebaseFirestore.instance.collection('employee').add({
+              DocumentReference employeeRef =
+                  await FirebaseFirestore.instance.collection('employee').add({
                 'name': _nameController.text,
                 'age': int.parse(_ageController.text),
                 'email': _emailController.text,
@@ -116,14 +121,17 @@ class _AddEmployeeState extends State<AddEmployee> {
                 'services': servicePricesWithIds,
                 'avgRating': 0,
                 'numberOfRatings': 0,
+                'gender': _selectedGender.name.toLowerCase()
               });
 
               loggedInBrand.employees.add(employeeRef.id);
               print('brand id ${loggedInBrand.uid}');
-              await FirebaseFirestore.instance.collection('brands').doc(loggedInBrand.uid).set({
+              await FirebaseFirestore.instance
+                  .collection('brands')
+                  .doc(loggedInBrand.uid)
+                  .set({
                 'employees': FieldValue.arrayUnion([employeeRef.id]),
               }, SetOptions(merge: true));
-
 
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Employee added successfully')),
@@ -170,9 +178,9 @@ class _AddEmployeeState extends State<AddEmployee> {
                   backgroundImage: _image != null ? FileImage(_image!) : null,
                   child: _image == null
                       ? Icon(
-                    Icons.add_a_photo,
-                    size: 50,
-                  )
+                          Icons.add_a_photo,
+                          size: 50,
+                        )
                       : null,
                 ),
               ),
@@ -214,6 +222,55 @@ class _AddEmployeeState extends State<AddEmployee> {
                         return null;
                       },
                     ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(bottom: BorderSide(
+                          color: Colors.grey, // Choose your desired border color
+                          width: 1.25,
+                        ))
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text('Select Gender', style: TextStyle(fontSize: 15),),
+                          SizedBox(
+                            width: 30,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedGender = Gender.Male;
+                              });
+                            },
+                            child: Icon(
+                              Icons.male,
+                              color: _selectedGender == Gender.Male
+                                  ? Colors.blue // Apply color based on selection
+                                  : Colors.grey,
+                              size: 40,
+                            ),
+                          ),
+                          SizedBox(width: 20),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedGender = Gender.Female;
+                              });
+                            },
+                            child: Icon(
+                              Icons.female,
+                              color: _selectedGender == Gender.Female
+                                  ? Colors.pink // Apply color based on selection
+                                  : Colors.grey,
+                              size: 40,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     SizedBox(height: 16.0),
                     MultiSelectDialogField(
                       searchHint: "Type service name",
@@ -228,7 +285,9 @@ class _AddEmployeeState extends State<AddEmployee> {
                       listType: MultiSelectListType.CHIP,
                       onConfirm: (values) {
                         setState(() {
-                          _selectedServices = values.map<String>((value) => value as String).toList();
+                          _selectedServices = values
+                              .map<String>((value) => value as String)
+                              .toList();
                         });
                       },
                       chipDisplay: MultiSelectChipDisplay(
@@ -252,11 +311,13 @@ class _AddEmployeeState extends State<AddEmployee> {
                             SizedBox(width: 10),
                             Expanded(
                               child: TextFormField(
-                                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                keyboardType: TextInputType.numberWithOptions(
+                                    decimal: true),
                                 decoration: InputDecoration(labelText: 'Price'),
                                 onChanged: (value) {
                                   setState(() {
-                                    _servicePrices[service] = double.tryParse(value) ?? 0.0;
+                                    _servicePrices[service] =
+                                        double.tryParse(value) ?? 0.0;
                                   });
                                 },
                               ),

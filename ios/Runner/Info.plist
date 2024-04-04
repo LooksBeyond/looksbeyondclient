@@ -8,6 +8,8 @@
 	<string>Looksbeyondclient</string>
 	<key>NSPhotoLibraryUsageDescription</key>
     <string>We need permission to access your library</string>
+    <key>NSCameraUsageDescription</key>
+    <string>This app needs camera access to scan QR codes</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

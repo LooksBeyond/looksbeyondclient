@@ -191,7 +191,6 @@ class _DashboardState extends State<Dashboard> {
                             // Update the status of the booking to "completed"
                             bookingList[index].status = Status.completed;
 
-                            // Update the document in Firestore
                             await FirebaseFirestore.instance
                                 .collection('bookings')
                                 .doc(bookingList[index].id)
@@ -202,7 +201,6 @@ class _DashboardState extends State<Dashboard> {
                                     'Failed to update booking status: $error'));
 
                             setState(() {
-                              // Update the local list to reflect the change
                               bookingList.removeAt(index);
                             });
                           },

@@ -24,7 +24,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
   TextEditingController phoneTextEditingController = TextEditingController();
 
   GlobalKey<FormState> _ownerNameFormKey = GlobalKey<FormState>();
-  TextEditingController ownerNameTextEditingController = TextEditingController();
+  TextEditingController ownerNameTextEditingController =
+      TextEditingController();
 
   bool isLoading = false;
 
@@ -55,7 +56,6 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     authenticationProvider =
         Provider.of<AuthenticationProvider>(context, listen: false);
@@ -91,11 +91,11 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                     if (_addressFormKey.currentState!.validate()) {
                       setState(() {
                         address = _street! +
-                            " , " +
+                            ", " +
                             _city! +
-                            " , " +
+                            ", " +
                             _province! +
-                            " , " +
+                            ", " +
                             _zipCode!;
                       });
                       incrementStep();
@@ -162,7 +162,9 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                     isActive: _currentStep == 2,
                   ),
                   Step(
-                    title: _currentStep == 3 ? Text('Owner Name') : SizedBox.shrink(),
+                    title: _currentStep == 3
+                        ? Text('Owner Name')
+                        : SizedBox.shrink(),
                     content: addOwnerName(),
                     isActive: _currentStep == 3,
                   ),
