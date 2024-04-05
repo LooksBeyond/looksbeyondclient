@@ -23,6 +23,8 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
+            surfaceTintColor: Colors.white,
+            backgroundColor: Colors.white,
             title: Text("Delete Employee"),
             content: Text("Are you sure you want to delete this employee?"),
             actions: [

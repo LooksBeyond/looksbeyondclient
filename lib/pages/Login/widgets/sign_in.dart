@@ -277,6 +277,8 @@ class _SignInState extends State<SignIn> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          surfaceTintColor: Colors.white,
+          backgroundColor: Colors.white,
           title: Text("Forgot Password"),
           content: TextField(
             onChanged: (value) {
@@ -321,6 +323,8 @@ class _SignInState extends State<SignIn> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          surfaceTintColor: Colors.white,
+          backgroundColor: Colors.white,
           title: Text("Success"),
           content: Text("Password reset email sent successfully."),
           actions: <Widget>[
@@ -341,6 +345,8 @@ class _SignInState extends State<SignIn> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          surfaceTintColor: Colors.white,
+          backgroundColor: Colors.white,
           title: Text("Error"),
           content: Text("Failed to send password reset email. Please try again later."),
           actions: <Widget>[
