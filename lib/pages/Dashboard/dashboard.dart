@@ -193,19 +193,43 @@ class _DashboardState extends State<Dashboard> {
                               "\$" + bookingList[index].subtotal.toString()),
                           trailing: IconButton(
                             onPressed: () async {
-                              final String? scannedData = await Navigator.push(
-                                context,
+                              final scannedData =
+                                  await Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => ScanBooking(),
                                 ),
                               );
 
                               if (scannedData != null) {
-                                // Process scanned data
-                                print('Scanned Data: $scannedData');
+                                print("SCANNED DATA: ${scannedData}");
+                                // Update the status of the booking to "completed"
+                                if (scannedData == bookingList[index].id) {
+                                  bookingList[index].status = Status.completed;
+
+                                  await FirebaseFirestore.instance
+                                      .collection('bookings')
+                                      .doc(scannedData)
+                                      .update({'status': 'completed'})
+                                      .then((value) => print(
+                                          'Booking status updated successfully'))
+                                      .catchError((error) => print(
+                                          'Failed to update booking status: $error'));
+
+                                  setState(() {
+                                    bookingList.removeAt(index);
+                                  });
+                                }
+                                else{
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Wrong QR code"),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                }
                               }
                             },
-                            icon: Icon(Icons.camera_alt_outlined),
+                            icon: Icon(Icons.qr_code_outlined),
                           ),
                         ),
                       );
@@ -220,19 +244,3 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 }
-
-// Update the status of the booking to "completed"
-// bookingList[index].status = Status.completed;
-
-// await FirebaseFirestore.instance
-//     .collection('bookings')
-//     .doc(bookingList[index].id)
-//     .update({'status': 'completed'})
-//     .then((value) => print(
-//         'Booking status updated successfully'))
-//     .catchError((error) => print(
-//         'Failed to update booking status: $error'));
-//
-// setState(() {
-//   bookingList.removeAt(index);
-// });

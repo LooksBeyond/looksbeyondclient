@@ -25,5 +25,5 @@ Map<String, WidgetBuilder> appRoutes = {
   AllBookings.pageName: (context) => const AllBookings(),
   EmployeeProfile.pageName: (context) => const EmployeeProfile(),
   BookingDetails.pageName: (context) => const BookingDetails(),
-  ScanBooking.pageName: (context) => const ScanBooking(),
+  // ScanBooking.pageName: (context) => const ScanBooking(),
 };
