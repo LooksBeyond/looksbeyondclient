@@ -10,7 +10,9 @@ import 'package:looksbeyondclient/pages/AllBookings/AllBookings.dart';
 import 'package:looksbeyondclient/pages/BrandProfileScreen/BrandProfileScreen.dart';
 import 'package:looksbeyondclient/pages/Earnings/Earnings.dart';
 import 'package:looksbeyondclient/pages/Employees/employees.dart';
+import 'package:looksbeyondclient/pages/ScanBooking/ScanBooking.dart';
 import 'package:looksbeyondclient/provider/AuthProvider.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 
 class BottomNavBarScreen extends StatefulWidget {
@@ -100,6 +102,7 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: SvgPicture.asset(
           'assets/img/login_logo_black.svg',
           fit: BoxFit.contain,
@@ -139,7 +142,7 @@ class _DashboardState extends State<Dashboard> {
               Align(
                   alignment: Alignment.center,
                   child: Text(
-                    "Swipe left to complete a booking",
+                    "Scan QR to complete a booking",
                     style: TextStyle(fontStyle: FontStyle.italic, fontSize: 10),
                   )),
               SizedBox(height: 10.0),
@@ -174,52 +177,38 @@ class _DashboardState extends State<Dashboard> {
                     shrinkWrap: true,
                     itemCount: bookingList.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return Dismissible(
-                          key: Key(bookingList[index]
-                              .id!), // Use a unique key for each booking
-                          direction: DismissDirection
-                              .endToStart, // Swipe from right to left
-                          background: Container(
-                            alignment: Alignment.centerRight,
-                            color: Colors.green,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: Icon(Icons.check_box, color: Colors.white),
+                      return Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color:
+                                  Colors.grey.withOpacity(0.5), // Border color
+                              width: 1.0, // Border width
                             ),
                           ),
-                          onDismissed: (direction) async {
-                            // Update the status of the booking to "completed"
-                            bookingList[index].status = Status.completed;
-
-                            await FirebaseFirestore.instance
-                                .collection('bookings')
-                                .doc(bookingList[index].id)
-                                .update({'status': 'completed'})
-                                .then((value) => print(
-                                    'Booking status updated successfully'))
-                                .catchError((error) => print(
-                                    'Failed to update booking status: $error'));
-
-                            setState(() {
-                              bookingList.removeAt(index);
-                            });
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: Colors.grey
-                                      .withOpacity(0.5), // Border color
-                                  width: 1.0, // Border width
+                        ),
+                        child: ListTile(
+                          title: Text(bookingList[index].title),
+                          subtitle: Text(
+                              "\$" + bookingList[index].subtotal.toString()),
+                          trailing: IconButton(
+                            onPressed: () async {
+                              final String? scannedData = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ScanBooking(),
                                 ),
-                              ),
-                            ),
-                            child: ListTile(
-                              title: Text(bookingList[index].title),
-                              subtitle: Text("\$" +
-                                  bookingList[index].subtotal.toString()),
-                            ),
-                          ));
+                              );
+
+                              if (scannedData != null) {
+                                // Process scanned data
+                                print('Scanned Data: $scannedData');
+                              }
+                            },
+                            icon: Icon(Icons.camera_alt_outlined),
+                          ),
+                        ),
+                      );
                     },
                   );
                 },
@@ -231,3 +220,19 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 }
+
+// Update the status of the booking to "completed"
+// bookingList[index].status = Status.completed;
+
+// await FirebaseFirestore.instance
+//     .collection('bookings')
+//     .doc(bookingList[index].id)
+//     .update({'status': 'completed'})
+//     .then((value) => print(
+//         'Booking status updated successfully'))
+//     .catchError((error) => print(
+//         'Failed to update booking status: $error'));
+//
+// setState(() {
+//   bookingList.removeAt(index);
+// });

@@ -9,6 +9,7 @@ import 'package:looksbeyondclient/pages/Employees/employees.dart';
 import 'package:looksbeyondclient/pages/Employees/widgets/addEmployee.dart';
 import 'package:looksbeyondclient/pages/Feedback/feedbackScreen.dart';
 import 'package:looksbeyondclient/pages/Login/loginPage.dart';
+import 'package:looksbeyondclient/pages/ScanBooking/ScanBooking.dart';
 
 import 'package:looksbeyondclient/pages/SplashScreen/SplashScreen.dart';
 
@@ -24,4 +25,5 @@ Map<String, WidgetBuilder> appRoutes = {
   AllBookings.pageName: (context) => const AllBookings(),
   EmployeeProfile.pageName: (context) => const EmployeeProfile(),
   BookingDetails.pageName: (context) => const BookingDetails(),
+  ScanBooking.pageName: (context) => const ScanBooking(),
 };
