@@ -121,7 +121,8 @@ class _AddEmployeeState extends State<AddEmployee> {
                 'services': servicePricesWithIds,
                 'avgRating': 0,
                 'numberOfRatings': 0,
-                'gender': _selectedGender.name.toLowerCase()
+                'gender': _selectedGender.name.toLowerCase(),
+                'brandId': loggedInBrand.uid
               });
 
               loggedInBrand.employees.add(employeeRef.id);
@@ -227,15 +228,18 @@ class _AddEmployeeState extends State<AddEmployee> {
                     ),
                     Container(
                       decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(
-                          color: Colors.grey, // Choose your desired border color
-                          width: 1.25,
-                        ))
-                      ),
+                          border: Border(
+                              bottom: BorderSide(
+                        color: Colors.grey, // Choose your desired border color
+                        width: 1.25,
+                      ))),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Text('Select Gender', style: TextStyle(fontSize: 15),),
+                          Text(
+                            'Select Gender',
+                            style: TextStyle(fontSize: 15),
+                          ),
                           SizedBox(
                             width: 30,
                           ),
@@ -248,7 +252,8 @@ class _AddEmployeeState extends State<AddEmployee> {
                             child: Icon(
                               Icons.male,
                               color: _selectedGender == Gender.Male
-                                  ? Colors.blue // Apply color based on selection
+                                  ? Colors
+                                      .blue // Apply color based on selection
                                   : Colors.grey,
                               size: 40,
                             ),
@@ -263,7 +268,8 @@ class _AddEmployeeState extends State<AddEmployee> {
                             child: Icon(
                               Icons.female,
                               color: _selectedGender == Gender.Female
-                                  ? Colors.pink // Apply color based on selection
+                                  ? Colors
+                                      .pink // Apply color based on selection
                                   : Colors.grey,
                               size: 40,
                             ),
