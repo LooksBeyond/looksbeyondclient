@@ -157,7 +157,7 @@ class _DashboardState extends State<Dashboard> {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     print('Waiting for data...');
-                    return CircularProgressIndicator();
+                    return Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasError) {
                     print('Error: ${snapshot.error}');
@@ -218,8 +218,7 @@ class _DashboardState extends State<Dashboard> {
                                   setState(() {
                                     bookingList.removeAt(index);
                                   });
-                                }
-                                else{
+                                } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text("Wrong QR code"),

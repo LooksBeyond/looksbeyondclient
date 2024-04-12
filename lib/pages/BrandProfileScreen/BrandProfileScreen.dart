@@ -19,92 +19,102 @@ class _BrandProfileScreenState extends State<BrandProfileScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    authenticationProvider = Provider.of<AuthenticationProvider>(context, listen: false);
+    authenticationProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
     loggedInBrand = authenticationProvider.loggedInBrand!;
   }
-
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Profile',
-            style: TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+      appBar: AppBar(
+        title: Text(
+          'Profile',
+          style: TextStyle(
+            fontSize: 24.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
-          actions: [
-            IconButton(onPressed: (){
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    surfaceTintColor: Colors.white,
-                    backgroundColor: Colors.white,
-                    title: Text("Logout"),
-                    content: Text("Are you sure you want to logout?"),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text("Cancel"),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          authenticationProvider.signOut(context);
-                        },
-                        child: Text("Logout"),
-                      ),
-                    ],
-                  );
-                },
-              );
-            }, icon: Icon(Icons.logout))
-          ],
         ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  child: CachedNetworkImage(
-                    imageUrl: loggedInBrand.brandLogo,
-                    placeholder: (context, url) => CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
-                    imageBuilder: (context, imageProvider) => Container(
-                      child: Image(
-                        image: imageProvider,
-                      ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      surfaceTintColor: Colors.white,
+                      backgroundColor: Colors.white,
+                      title: Text("Logout"),
+                      content: Text("Are you sure you want to logout?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("Cancel"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            authenticationProvider.signOut(context);
+                          },
+                          child: Text("Logout"),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              icon: Icon(Icons.logout))
+        ],
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                child: CachedNetworkImage(
+                  imageUrl: loggedInBrand.brandLogo,
+                  placeholder: (context, url) => Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  imageBuilder: (context, imageProvider)
+
+                  => Container(
+                    child: Image(
+                      image: imageProvider,
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildDetail(Icons.verified_user_outlined, "Brand Name", loggedInBrand.brand, width),
-                      _buildDetail(Icons.email, "Brand Email", loggedInBrand.email, width),
-                      _buildDetail(Icons.phone, "Brand Phone", loggedInBrand.phoneNumber, width),
-                      _buildDetail(Icons.location_on, "Address", loggedInBrand.address, width),
-                      _buildDetail(Icons.monetization_on_outlined, "Owner name", loggedInBrand.owner, width),
-                    ],
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildDetail(Icons.verified_user_outlined, "Brand Name",
+                        loggedInBrand.brand, width),
+                    _buildDetail(
+                        Icons.email, "Brand Email", loggedInBrand.email, width),
+                    _buildDetail(Icons.phone, "Brand Phone",
+                        loggedInBrand.phoneNumber, width),
+                    _buildDetail(Icons.location_on, "Address",
+                        loggedInBrand.address, width),
+                    _buildDetail(Icons.monetization_on_outlined, "Owner name",
+                        loggedInBrand.owner, width),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
+      ),
     );
   }
 }
-
 
 Widget _buildDetail(IconData icon, String title, String value, double width) {
   return Padding(
@@ -156,4 +166,3 @@ Widget _buildDetail(IconData icon, String title, String value, double width) {
     ),
   );
 }
-

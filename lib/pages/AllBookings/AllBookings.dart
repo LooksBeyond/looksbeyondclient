@@ -51,7 +51,9 @@ class _AllBookingsState extends State<AllBookings> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               print('Waiting for data...');
-              return CircularProgressIndicator();
+              return Center(
+                child: CircularProgressIndicator(),
+              );
             }
             if (snapshot.hasError) {
               print('Error: ${snapshot.error}');
@@ -69,6 +71,7 @@ class _AllBookingsState extends State<AllBookings> {
             }
             return ListView.builder(
               shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
               itemCount: bookingList.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(

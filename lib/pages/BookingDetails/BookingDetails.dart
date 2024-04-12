@@ -13,6 +13,23 @@ class BookingDetails extends StatefulWidget {
 }
 
 class _BookingDetailsState extends State<BookingDetails> {
+  String millisecondsToTimeString(int milliseconds) {
+    // Create a DateTime object using milliseconds since epoch
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(milliseconds);
+
+    // Extract the date and time components
+    String year = dateTime.year.toString();
+    String month = dateTime.month.toString().padLeft(2, '0');
+    String day = dateTime.day.toString().padLeft(2, '0');
+    // String hour = dateTime.hour.toString().padLeft(2, '0');
+    // String minute = dateTime.minute.toString().padLeft(2, '0');
+    // String second = dateTime.second.toString().padLeft(2, '0');
+
+    // Format the time string
+    String formattedTime = '$year-$month-$day';
+
+    return formattedTime;
+  }
   @override
   Widget build(BuildContext context) {
     final brandBooking =
@@ -115,7 +132,7 @@ class _BookingDetailsState extends State<BookingDetails> {
                       },
                     ),
                     _buildDetail(
-                        "Date", brandBooking.dateTime.toString(), width),
+                        "Date", millisecondsToTimeString(brandBooking.dateTime), width),
                     FutureBuilder<DocumentSnapshot>(
                       future: FirebaseFirestore.instance
                           .collection('employee')
